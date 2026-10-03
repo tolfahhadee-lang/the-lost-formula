@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Lost Formula</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #101827;
+    color: white;
+    min-height: 100vh;
+}
+
+.game-container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 30px 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+h1 {
+    color: #fbbf24;
+    font-size: 48px;
+    margin: 5px 0;
+}
+
+.subtitle {
+    color: #93c5fd;
+    font-size: 22px;
+}
+
+.story {
+    background: #1e293b;
+    border: 2px solid #334155;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.timer {
+    background: #7f1d1d;
+    border: 2px solid #ef4444;
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 25px;
+}
+
+#timer {
+    color: #fca5a5;
+}
+
+.locks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.lock {
+    background: #1e293b;
+    border: 2px solid #475569;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+}
+
+.lock-number {
+    font-size: 40px;
+    margin-bottom: 5px;
+}
+
+.lock-title {
+    font-size: 24px;
+    color: #fbbf24;
+    margin-bottom: 15px;
+}
+.clue-card {
+    background: #172554;
+    border: 2px solid #3b82f6;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 15px;
+    text-align: left;
+    color: #bfdbfe;
+}
+
+.clue-card strong {
+    color: #60a5fa;
+    font-size: 18px;
+}
+
+.clue-card p {
+    margin: 8px 0 0;
+    font-size: 15px;
+    line-height: 1.5;
+}
+.problem {
+    background: #0f172a;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid #64748b;
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+button {
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    background: #2563eb;
+    color: white;
+    margin: 5px;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+.hint {
+    background: #713f12;
+    color: #fde68a;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 10px;
+    display: none;
+}
+
+.result {
+    margin-top: 12px;
+    font-weight: bold;
+    min-height: 25px;
+}
+
+.locked {
+    color: #f87171;
+}
+
+.unlocked {
+    color: #4ade80;
+}
+
+.master {
+    margin-top: 30px;
+    background: #312e81;
+    border: 3px solid #818cf8;
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+}
+
+.master input {
+    max-width: 400px;
+}
+
+#winScreen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.97);
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 100;
+}
+
+.win-box {
+    background: #1e293b;
+    border: 3px solid #4ade80;
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 600px;
+    margin: 20px;
+}
+
+.win-box h2 {
+    color: #4ade80;
+    font-size: 42px;
+}
+
+@media (max-width: 600px) {
+    h1 {
+        font-size: 36px;
+    }
+
+    .subtitle {
+        font-size: 18px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="game-container">
+
+<header>
+    <h1>🔐 The Lost Formula</h1>
+    <div class="subtitle">Algebra Escape Room</div>
+</header>
+
+<div class="story">
+    <h2>Welcome to the Math Lab!</h2>
+    <p>
+        The mysterious professor has hidden the Lost Formula.
+    </p>
+    <p>
+        Solve the five mathematical locks and escape before the timer ends!
+    </p>
+    <p>
+        Work together and enter the correct code for each lock.
+    </p>
+</div>
+
+<div class="timer">
+    <button id="startButton" onclick="startGame()">▶️ START GAME</button>
+    ⏱ TIME REMAINING:
+    <span id="timer">30:00</span>
+</div>
+
+<div class="locks">
+
+    <!-- LOCK 1 -->
+    <div class="lock">
+        <div class="lock-number">🔒</div>
+        <div class="lock-title">LOCK 1</div>
+<div class="clue-card">
+    🕵️ <strong>Professor's Clue</strong>
+    <p>
+        The professor left a message beside the first lock.
+        Start by following the correct order of operations.
+    </p>
+</div>
+        <div class="problem">
+            Evaluate using order of operations:<br><br>
+            <strong>(8 + 4) × 3 − 10</strong>
+        </div>
+
+        <input id="answer1" type="text" placeholder="Enter code">
+
+        <button onclick="checkLock(1, '26')">
+            Unlock
+        </button>
+
+        <button onclick="showHint(1)">
+            💡 Hint
+        </button>
+
+        <div id="hint1" class="hint">
+            Solve the parentheses first, then multiply, then subtract.
+        </div>
+
+        <div id="result1" class="result locked">
+            🔒 Locked
+        </div>
+    </div>
+
+
+    <!-- LOCK 2 -->
+    <div class="lock">
+        <div class="lock-number">🔒</div>
+        <div class="lock-title">LOCK 2</div>
+<div class="clue-card">
+    🧮 <strong>Professor's Clue</strong>
+    <p>
+        A hidden variable is waiting to be discovered.
+        Substitute the given value carefully and remember the exponent.
+    </p>
+</div>
+        <div class="problem">
+            Evaluate the expression when
+            <strong>x = 3</strong>:<br><br>
+            <strong>2x² − 3x + 1</strong>
+        </div>
+
+        <input id="answer2" type="text" placeholder="Enter code">
+
+        <button onclick="checkLock(2, '10')">
+            Unlock
+        </button>
+
+        <button onclick="showHint(2)">
+            💡 Hint
+        </button>
+
+        <div id="hint2" class="hint">
+            Substitute x = 3, then calculate the exponent first.
+        </div>
+
+        <div id="result2" class="result locked">
+            🔒 Locked
+        </div>
+    </div>
+
+
+    <!-- LOCK 3 -->
+    <div class="lock">
+        <div class="lock-number">🔒</div>
+        <div class="lock-title">LOCK 3</div>
+<div class="clue-card">
+    ➕ <strong>Professor's Clue</strong>
+    <p>
+        The professor combined some terms in this lock.
+        Look for terms with the same variable and combine them first.
+    </p>
+</div>
+        <div class="problem">
+            Simplify and then evaluate when
+            <strong>a = 4</strong>:<br><br>
+            <strong>7a − 3a + 5</strong>
+        </div>
+
+        <input id="answer3" type="text" placeholder="Enter code">
+
+        <button onclick="checkLock(3, '21')">
+            Unlock
+        </button>
+
+        <button onclick="showHint(3)">
+            💡 Hint
+        </button>
+
+        <div id="hint3" class="hint">
+            Combine 7a − 3a first. Then substitute a = 4.
+        </div>
+
+        <div id="result3" class="result locked">
+            🔒 Locked
+        </div>
+    </div>
+
+
+    <!-- LOCK 4 -->
+    <div class="lock">
+        <div class="lock-number">🔒</div>
+        <div class="lock-title">LOCK 4</div>
+<div class="clue-card">
+    ✖️ <strong>Professor's Clue</strong>
+    <p>
+        Two algebraic brackets hide the next code.
+        Multiply each term carefully and then substitute the value of x.
+    </p>
+</div>
+        <div class="problem">
+            Multiply the binomials and evaluate
+            when <strong>x = 3</strong>:<br><br>
+            <strong>(x + 4)(x − 2)</strong>
+        </div>
+
+        <input id="answer4" type="text" placeholder="Enter code">
+
+        <button onclick="checkLock(4, '7')">
+            Unlock
+        </button>
+
+        <button onclick="showHint(4)">
+            💡 Hint
+        </button>
+
+        <div id="hint4" class="hint">
+            Expand the brackets first, then substitute x = 3.
+        </div>
+
+        <div id="result4" class="result locked">
+            🔒 Locked
+        </div>
+    </div>
+
+
+    <!-- LOCK 5 -->
+    <div class="lock">
+        <div class="lock-number">🔒</div>
+        <div class="lock-title">LOCK 5</div>
+
+<div class="clue-card">
+    <div class="clue-card">
+    🔐 <strong>Professor's Clue</strong>
+    <p>
+        The final lock hides its secret in a special pattern.
+        Look for two numbers whose squares reveal the factorization.
+    </p>
+</div>
+
+<div class="problem">
+            Factor the expression:<br><br>
+            <strong>x² − 25</strong><br><br>
+            What two numbers appear in the factors?
+        </div>
+
+        <input id="answer5" type="text" placeholder="Enter code">
+
+        <button onclick="checkLock(5, '55')">
+            Unlock
+        </button>
+
+        <button onclick="showHint(5)">
+            💡 Hint
+        </button>
+
+        <div id="hint5" class="hint">
+            Think of the difference of squares:
+            x² − 5².
+        </div>
+
+        <div id="result5" class="result locked">
+            🔒 Locked
+        </div>
+    </div>
+
+</div>
+
+
+<div class="master">
+
+    <h2>🔐 MASTER LOCK</h2>
+
+    <p>
+        All five locks are solved!
+    </p>
+
+    <p>
+        Enter the five codes together in order:
+    </p>
+
+    <p>
+        Lock 1 → Lock 2 → Lock 3 → Lock 4 → Lock 5
+    </p>
+
+    <input id="masterCode" type="text"
+           placeholder="Enter Master Code">
+
+    <br>
+
+    <button onclick="checkMaster()">
+        🔓 OPEN FINAL BOX
+    </button>
+
+    <div id="masterResult" class="result"></div>
+
+</div>
+
+</div>
+
+
+<!-- WIN SCREEN -->
+
+<div id="winScreen">
+
+    <div class="win-box">
+
+        <h2>🎉 ESCAPE COMPLETE! 🎉</h2>
+
+        <p>
+            Congratulations!
+        </p>
+
+        <p>
+            You solved all five algebra locks and found
+            <strong>The Lost Formula!</strong>
+        </p>
+
+        <p>
+            🧮 Math Lab successfully escaped!
+        </p>
+
+        <button onclick="location.reload()">
+            🔄 Play Again
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let timeLeft = 30 * 60;
+let timerRunning = false;
+
+let solved = [false, false, false, false, false];
+function startGame() {
+    timerRunning = true;
+    document.getElementById("startButton").style.display = "none";
+}
+
+function updateTimer() {
+
+    if (!timerRunning) return;
+
+    let minutes = Math.floor(timeLeft / 60);
+    let seconds = timeLeft % 60;
+
+    document.getElementById("timer").textContent =
+        String(minutes).padStart(2, "0") + ":" +
+        String(seconds).padStart(2, "0");
+
+    if (timeLeft <= 0) {
+
+        timerRunning = false;
+
+        alert("⏰ Time is over! Try again.");
+
+        return;
+    }
+
+    timeLeft--;
+}
+
+setInterval(updateTimer, 1000);
+
+
+function checkLock(lockNumber, correctAnswer) {if (lockNumber > 1 && !solved[lockNumber - 2]) {
+    alert("🔒 You must unlock the previous lock first!");
+    return;
+}
+
+    let input =
+        document.getElementById("answer" + lockNumber);
+
+    let result =
+        document.getElementById("result" + lockNumber);
+
+    let answer =
+        input.value.trim();
+
+    if (answer === correctAnswer) {
+
+        solved[lockNumber - 1] = true;
+
+        result.textContent =
+            "🔓 UNLOCKED! Correct answer!";
+
+        result.className =
+            "result unlocked";
+
+        input.disabled = true;
+
+    } else {
+
+        result.textContent =
+            "❌ Incorrect code. Try again.";
+
+        result.className =
+            "result locked";
+    }
+}
+
+
+function showHint(lockNumber) {
+
+    let hint =
+        document.getElementById("hint" + lockNumber);
+
+    if (hint.style.display === "block") {
+
+        hint.style.display = "none";
+
+    } else {
+
+        hint.style.display = "block";
+    }
+}
+
+
+function checkMaster() {
+
+    let master =
+        document.getElementById("masterCode").value.trim();
+
+    let result =
+        document.getElementById("masterResult");
+
+    let allSolved =
+        solved.every(value => value === true);
+
+    if (!allSolved) {
+
+        result.textContent =
+            "🔒 You must unlock all five locks first.";
+
+        result.className =
+            "result locked";
+
+        return;
+    }
+
+    if (master === "2610210755") {
+
+        timerRunning = false;
+
+        document.getElementById("winScreen").style.display =
+            "flex";
+
+    } else {
+
+        result.textContent =
+            "❌ Wrong master code. Check the five lock codes.";
+
+        result.className =
+            "result locked";
+    }
+}
+
+</script>
+
+</body>
+</html>
